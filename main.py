@@ -1,8 +1,7 @@
 from scipy.stats import unitary_group
 from qiskit import Aer
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute
+from qiskit import QuantumCircuit, execute
 import random, math, numpy
-import matplotlib.pyplot as plt
 
 
 class Const:
