@@ -134,7 +134,7 @@ def exp(xs, encoder, nqubit, locality, L, l):
 
 
 if __name__ == '__main__':
-    with open('variances.txt', "w") as f:
+    with open('output/variances.txt', "w") as f:
         for nqubit in [2, 4, 6, 8, 10, 12, 14]:
             xs = generate_data(nqubit, 1)[0]
             for locality in [1, nqubit]:
