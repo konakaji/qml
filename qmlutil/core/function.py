@@ -1,4 +1,4 @@
-from qmlutil.core.encoder import Encoder, VariationalEncoder
+from qmlutil.core.encoder import Encoder
 from qmlutil.core.observable import Observable
 from qmlutil.core.pqc import HEA
 from qmlutil.core.wrapper import QiskitCircuit, QulacsCircuit
