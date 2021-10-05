@@ -2,7 +2,10 @@ from qmlutil.core.wrapper import QWrapper as QuantumCircuit
 
 
 class Observable:
-    def expectation(self, qc: QuantumCircuit):
+    def exact(self, qc: QuantumCircuit):
+        return 0
+
+    def sample(self, qc: QuantumCircuit, nshot):
         return 0
 
 
@@ -41,6 +44,9 @@ class PauliZ(Observable):
         self.nqubit = nqubit
         self.target_qubit = target_qubit
 
-    def expectation(self, qc: QuantumCircuit):
+    def exact(self, qc: QuantumCircuit):
         bitobj = BitObj(self.nqubit, qc.get_state_vector())
         return bitobj.probability([self.target_qubit], ['0']) - bitobj.probability([self.target_qubit], ['1'])
+
+    def sample(self, qc: QuantumCircuit, nshot):
+        return super().sample(qc, nshot)

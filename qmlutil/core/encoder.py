@@ -11,3 +11,7 @@ class TensorEncoder(Encoder):
         for i, v in enumerate(vector):
             qc.rz(v, i)
         return qc
+
+
+class DoNothingEncoder(Encoder):
+    pass

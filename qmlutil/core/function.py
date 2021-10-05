@@ -1,8 +1,9 @@
-from qmlutil.core.encoder import Encoder
+from qmlutil.core.encoder import Encoder, DoNothingEncoder
 from qmlutil.core.observable import Observable
 from qmlutil.core.pqc import HEA
 from qmlutil.core.wrapper import QiskitCircuit, QulacsCircuit
 from qmlutil.core.const import Impl
+import numpy as np
 from math import pi
 
 
@@ -90,4 +91,15 @@ class F(FBase):
 
     def _value_with_shift(self, vector, l_index=None, p_index=0, angle=0.0):
         qc = self._circuit_with_shift(vector, l_index, p_index, angle)
-        return self.observable.expectation(qc)
+        return self.observable.exact(qc)
+
+
+class Energy(F):
+    def __init__(self, observable: Observable, nqubit, pqc_l_count, impl=Impl.QISKIT):
+        super().__init__(DoNothingEncoder(), observable, nqubit, 0, pqc_l_count, impl)
+
+    def value(self, vector=None):
+        return super().value([])
+
+    def gradient_vector(self, vector=None):
+        return np.array(super().gradient_vector([]))

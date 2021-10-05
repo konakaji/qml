@@ -83,6 +83,7 @@ class AdamOptimizer(Optimizer):
                 self.monitor.watch(self._t)
             derivative = gradient_function(params)
             self._t += 1
+
             self._m = self._beta1 * self._m + (1 - self._beta1) * derivative
             self._v = self._beta2 * self._v + (1 - self._beta2) * derivative * derivative
             lr_eff = self.scheduler.value(self._t) * np.sqrt(1 - self._beta2 ** self._t) / (1 - self._beta1 ** self._t)

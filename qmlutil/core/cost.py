@@ -1,5 +1,5 @@
 import numpy as np
-from qmlutil.core.function import F
+from qmlutil.core.function import FBase
 
 
 class Cost:
@@ -7,10 +7,10 @@ class Cost:
         self.xs = xs
         self.ys = ys
 
-    def value(self, f: F):
+    def value(self, f: FBase):
         return 0
 
-    def build_gradient(self, f: F):
+    def build_gradient(self, f: FBase):
         def function(parameters):
             f.update(parameters)
 
@@ -21,7 +21,7 @@ class MSE(Cost):
     def __init__(self, xs, ys):
         super().__init__(xs, ys)
 
-    def value(self, f: F):
+    def value(self, f: FBase):
         result = 0
         for i, x in enumerate(self.xs):
             y = self.ys[i]
@@ -30,7 +30,7 @@ class MSE(Cost):
         result = result / (2 * len(self.xs))
         return result
 
-    def build_gradient(self, f: F):
+    def build_gradient(self, f: FBase):
         def function(parameters):
             f.update(parameters)
             result = [0] * len(f.params())
