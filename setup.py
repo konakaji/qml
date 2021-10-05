@@ -18,5 +18,13 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    install_requires=[
+        "numpy~=1.21.2",
+        "scipy~=1.7.1",
+        "qiskit~=0.29.1",
+        "Qulacs~=0.3.0",
+        "matplotlib~=3.4.3",
+        "setuptools~=58.0.4",
+    ],
     python_requires='>=3.7',
 )
