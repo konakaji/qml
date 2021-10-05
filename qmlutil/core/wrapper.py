@@ -1,7 +1,7 @@
 from qiskit import QuantumCircuit
 from qiskit import Aer
 from qiskit import execute
-from qulacs import QuantumState
+from qulacs import QuantumState, QuantumCircuit as QCircuit
 
 
 class Const:
@@ -22,6 +22,9 @@ class QWrapper:
     def rz(self, theta, index):
         pass
 
+    def cnot(self, c_index, t_index):
+        pass
+
     def measure_all(self):
         pass
 
@@ -40,34 +43,40 @@ class QWrapper:
 
 class QulacsCircuit(QWrapper):
     def __init__(self, nqubit):
-        self.qc = QuantumState(nqubit)
+        self.state = QuantumState(nqubit)
+        self.state.set_zero_state()
+        self.circuit = QCircuit(nqubit)
 
     def h(self, index):
-        super().h(index)
+        self.circuit.add_H_gate(index)
 
     def rx(self, theta, index):
-        pass
+        self.circuit.add_RX_gate(index, theta)
 
     def ry(self, theta, index):
-        pass
+        self.circuit.add_RY_gate(index, theta)
 
     def rz(self, theta, index):
-        pass
+        self.circuit.add_RZ_gate(index, theta)
+
+    def cnot(self, c_index, t_index):
+        self.circuit.add_CNOT_gate(c_index, t_index)
 
     def measure_all(self):
-        super().measure_all()
+        pass
 
     def barrier(self):
-        super().barrier()
+        pass
 
     def draw(self):
-        super().draw()
+        pass
 
     def get_counts(self, nshot):
-        super().get_counts(nshot)
+        pass
 
     def get_state_vector(self):
-        super().get_state_vector()
+        self.circuit.update_quantum_state(self.state)
+        return self.state.get_vector()
 
 
 class QiskitCircuit(QWrapper):
@@ -85,6 +94,9 @@ class QiskitCircuit(QWrapper):
 
     def rz(self, theta, index):
         self.qc.rz(theta, index)
+
+    def cnot(self, c_index, t_index):
+        self.qc.cnot(c_index, t_index)
 
     def measure_all(self):
         self.qc.measure_all()

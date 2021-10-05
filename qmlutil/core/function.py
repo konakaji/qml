@@ -1,12 +1,29 @@
-from qmlutil.core.encoder import Encoder
+from qmlutil.core.encoder import Encoder, VariationalEncoder
 from qmlutil.core.observable import Observable
-from qmlutil.core.pqc import PQC, HEA
+from qmlutil.core.pqc import HEA
 from qmlutil.core.wrapper import QiskitCircuit, QulacsCircuit
 from qmlutil.core.const import Impl
 from math import pi
 
 
-class F:
+class FBase:
+    def circuit(self, vector):
+        pass
+
+    def params(self):
+        pass
+
+    def value(self, vector):
+        pass
+
+    def gradient_vector(self, vector):
+        pass
+
+    def update(self, params):
+        pass
+
+
+class F(FBase):
     def __init__(self, encoder: Encoder, observable: Observable, nqubit, l_count, pqc_l_count, impl=Impl.QISKIT):
         self.encoder = encoder
         self.observable = observable
@@ -44,7 +61,7 @@ class F:
         return results
 
     def update(self, params):
-        for l_index in range(self.l_count):
+        for l_index in range(self.l_count + 1):
             start = l_index * self.nqubit * self.pqc_l_count
             end = (l_index + 1) * self.nqubit * self.pqc_l_count
             self.pqcs[l_index].update(params[start:end])
@@ -68,7 +85,7 @@ class F:
         if self.l_count == l_index:
             self.pqcs[self.l_count].add_with_shift(qc, p_index, angle)
         else:
-            self.pqcs[self.nqubit].add(qc)
+            self.pqcs[self.l_count].add(qc)
         return qc
 
     def _value_with_shift(self, vector, l_index=None, p_index=0, angle=0.0):
