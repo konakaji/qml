@@ -9,7 +9,7 @@ from qmlutil.core.monitor import EnergyValueMonitor
 
 class TestVQE(TestCase):
     def test_exec(self):
-        energy = Energy(PauliZ(3, 0), 3, 4, Impl.QULAC)
+        energy = Energy(PauliZ(3, 0), 3, 4, impl=Impl.QULAC)
         optimizer = AdamOptimizer(monitor=EnergyValueMonitor(energy))
         vqe = VQE(energy, optimizer)
         vqe.exec()
