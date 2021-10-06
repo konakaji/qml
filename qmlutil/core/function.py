@@ -25,7 +25,8 @@ class FBase:
 
 
 class F(FBase):
-    def __init__(self, encoder: Encoder, observable: Observable, nqubit, l_count, pqc_l_count, impl=Impl.QISKIT):
+    def __init__(self, encoder: Encoder, observable: Observable, nqubit, l_count, pqc_l_count, impl=Impl.QISKIT,
+                 nshot=0):
         self.encoder = encoder
         self.observable = observable
         self.nqubit = nqubit
@@ -33,6 +34,7 @@ class F(FBase):
         self.pqc_l_count = pqc_l_count
         self.pqcs = []
         self.impl = impl
+        self.nshot = nshot
         self.reset()
 
     def reset(self):
@@ -91,12 +93,14 @@ class F(FBase):
 
     def _value_with_shift(self, vector, l_index=None, p_index=0, angle=0.0):
         qc = self._circuit_with_shift(vector, l_index, p_index, angle)
+        if self.nshot != 0:
+            return self.observable.sample(qc, self.nshot)
         return self.observable.exact(qc)
 
 
 class Energy(F):
-    def __init__(self, observable: Observable, nqubit, pqc_l_count, impl=Impl.QISKIT):
-        super().__init__(DoNothingEncoder(), observable, nqubit, 0, pqc_l_count, impl)
+    def __init__(self, observable: Observable, nqubit, pqc_l_count, impl=Impl.QISKIT, nshot=0):
+        super().__init__(DoNothingEncoder(), observable, nqubit, 0, pqc_l_count, impl, nshot)
 
     def value(self, vector=None):
         return super().value([])
