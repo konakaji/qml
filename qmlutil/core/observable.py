@@ -49,4 +49,4 @@ class PauliZ(Observable):
         return bitobj.probability([self.target_qubit], ['0']) - bitobj.probability([self.target_qubit], ['1'])
 
     def sample(self, qc: QuantumCircuit, nshot):
-        return super().sample(qc, nshot)
+        pass
