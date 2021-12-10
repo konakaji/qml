@@ -3,24 +3,34 @@ from qmlutil.core.observable import Observable
 from qmlutil.core.pqc import HEA
 from qmlutil.core.wrapper import QiskitCircuit, QulacsCircuit
 from qmlutil.core.const import Impl
+from abc import abstractmethod
 import numpy as np
 from math import pi
 
 
 class FBase:
+    @abstractmethod
     def circuit(self, vector):
         pass
 
+    @abstractmethod
     def params(self):
         pass
 
+    @abstractmethod
     def value(self, vector):
         pass
 
+    @abstractmethod
     def gradient_vector(self, vector):
         pass
 
+    @abstractmethod
     def update(self, params):
+        pass
+
+    @abstractmethod
+    def dot(self, v1, v2):
         pass
 
 
@@ -36,6 +46,14 @@ class F(FBase):
         self.impl = impl
         self.nshot = nshot
         self.reset()
+
+    def dot(self, v1, v2):
+        s1 = self.circuit(v1)
+        s2 = self.circuit(v2)
+        result = 0
+        for a1, a2 in zip(s1.get_state_vector(), s2.get_state_vector()):
+            result = result + a1.conjugate() * a2
+        return result
 
     def reset(self):
         pqcs = []
@@ -107,3 +125,8 @@ class Energy(F):
 
     def gradient_vector(self, vector=None):
         return np.array(super().gradient_vector([]))
+
+
+class Kernel(F):
+    def __init__(self, encoder: Encoder, nqubit, impl=Impl.QISKIT):
+        super().__init__(encoder, Observable(), nqubit=nqubit, l_count=1, pqc_l_count=0, impl=impl)
