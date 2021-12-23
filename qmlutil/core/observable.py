@@ -1,12 +1,17 @@
 from qmlutil.core.wrapper import QWrapper as QuantumCircuit
+from abc import abstractmethod, ABC
 
 
-class Observable:
+class Observable(ABC):
     def exact(self, qc: QuantumCircuit):
         return 0
 
     def sample(self, qc: QuantumCircuit, nshot):
         return 0
+
+    @abstractmethod
+    def serialize(self):
+        return "observable"
 
 
 class BitObj:
@@ -50,3 +55,6 @@ class PauliZ(Observable):
 
     def sample(self, qc: QuantumCircuit, nshot):
         pass
+
+    def serialize(self):
+        return "pauliz"
