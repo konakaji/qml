@@ -1,9 +1,14 @@
 from qmlutil.core.wrapper import QWrapper as QuantumCircuit
+from abc import abstractmethod, ABC
 
 
-class Encoder:
+class Encoder(ABC):
     def encode(self, qc: QuantumCircuit, vector):
         return qc
+
+    @abstractmethod
+    def serialize(self):
+        return "encoder"
 
 
 class TensorEncoder(Encoder):
@@ -12,6 +17,10 @@ class TensorEncoder(Encoder):
             qc.rz(v, i)
         return qc
 
+    def serialize(self):
+        return "tensorz"
+
 
 class DoNothingEncoder(Encoder):
-    pass
+    def serialize(self):
+        return "doNothing"

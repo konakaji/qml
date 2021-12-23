@@ -5,6 +5,7 @@ from qmlutil.core.wrapper import QiskitCircuit, QulacsCircuit
 from qmlutil.core.const import Impl
 from abc import abstractmethod
 import numpy as np
+import json
 from math import pi
 
 
@@ -46,6 +47,23 @@ class F(FBase):
         self.impl = impl
         self.nshot = nshot
         self.reset()
+
+    def serialize(self):
+        map = {}
+        map["encoder"] = self.encoder.serialize()
+        map["observable"] = self.observable.serialize()
+        map["nqubit"] = self.nqubit
+        map["l_count"] = self.l_count
+        map["pqc_l_count"] = self.pqc_l_count
+        map["impl"] = self.impl.name
+        map["nshot"] = self.nshot
+        pqcs = []
+        for pqc in self.pqcs:
+            pqcs.append({"rotations": pqc.rotations,
+                         "thetas": pqc.thetas,
+                         "l_count": pqc.l_count})
+        map["pqcs"] = pqcs
+        return json.dumps(map, indent=2)
 
     def dot(self, v1, v2):
         s1 = self.circuit(v1)
