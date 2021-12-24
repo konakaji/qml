@@ -10,6 +10,10 @@ class Encoder(ABC):
     def serialize(self):
         return "encoder"
 
+    @abstractmethod
+    def max_eigenvalues(self, dim):
+        return [0] * dim
+
 
 class TensorEncoder(Encoder):
     def encode(self, qc: QuantumCircuit, vector):
@@ -20,7 +24,15 @@ class TensorEncoder(Encoder):
     def serialize(self):
         return "tensorz"
 
+    def max_eigenvalues(self, dim):
+        return [0.5] * dim
+
 
 class DoNothingEncoder(Encoder):
     def serialize(self):
         return "doNothing"
+
+    def max_eigenvalues(self, dim):
+        return super(DoNothingEncoder, self).max_eigenvalues(dim)
+
+
