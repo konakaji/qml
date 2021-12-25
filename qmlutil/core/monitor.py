@@ -11,8 +11,8 @@ class CompositeMonitor(Monitor):
         for monitor in self.monitors:
             monitor.watch(iter)
 
-    def save(self, path):
-        for monitor in self.monitors:
+    def save(self, paths):
+        for monitor, path in zip(self.monitors, paths):
             monitor.save(path)
 
 
@@ -26,7 +26,7 @@ class EnergyValueMonitor(Monitor):
         value = self.f.value()
         line = "{}\t{}".format(iter, value)
         if self.verbose:
-            print(line)
+            print(line, flush=True)
         self.lines.append(line + "\n")
 
     def save(self, output):
@@ -43,7 +43,7 @@ class CostValueMonitor(Monitor):
     def watch(self, iter):
         value = self.cost.value(self.f)
         line = "{}\t{}".format(iter, value)
-        print(line)
+        print(line, flush=True)
         self.lines.append(line + "\n")
 
     def save(self, output):
