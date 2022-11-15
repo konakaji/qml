@@ -54,6 +54,7 @@ class Monitor:
     def save(self, path):
         path
 
+
 class AdamOptimizer(Optimizer):
     def __init__(self, scheduler=UnitLRScheduler(1e-3), maxiter=10000, monitor: Monitor = None, tol=1e-10, beta_1=0.9,
                  beta_2=0.99,

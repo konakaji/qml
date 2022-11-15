@@ -1,4 +1,5 @@
 from math import pi
+from qwrapper.circuit import QWrapper
 import random
 
 
@@ -19,13 +20,13 @@ class PQC:
         self.rotations = results
         self.thetas = thetas
 
-    def add(self, qc):
+    def add(self, qc: QWrapper):
         self.add_with_shift(qc)
 
     def update(self, params):
         self.thetas = params
 
-    def add_with_shift(self, qc, target_index=None, angle=0.0):
+    def add_with_shift(self, qc: QWrapper, target_index=None, angle=0.0):
         for i in range(self.l_count):
             for j in range(self.nqubit):
                 index = self.nqubit * i + j
@@ -36,7 +37,7 @@ class PQC:
             self.entangle(qc, i)
             qc.barrier()
 
-    def rotate(self, qc, rotation, theta, target):
+    def rotate(self, qc: QWrapper, rotation, theta, target):
         if rotation == 0:
             qc.rx(theta, target)
         elif rotation == 1:
@@ -49,7 +50,7 @@ class PQC:
 
 
 class HEA(PQC):
-    def entangle(self, qc, l_index):
+    def entangle(self, qc: QWrapper, l_index):
         for i in range(self.nqubit):
             if i % 2 == 0 and i != self.nqubit - 1:
                 qc.cnot(i, i + 1)
@@ -60,12 +61,13 @@ class HEA(PQC):
 
 
 class ALT(PQC):
-    def __init__(self, nqubit, l_count, locality):
+    def __init__(self, nqubit, l_count, locality, block_l_count=1):
         super().__init__(nqubit, l_count)
         self.locality = locality
+        self.block_l_count = block_l_count
 
-    def entangle(self, qc, l_index):
-        if l_index % 2 == 0:
+    def entangle(self, qc: QWrapper, l_index):
+        if l_index % (2 * self.block_l_count) < self.block_l_count:
             offset = 0
             for i in range(int(self.nqubit / self.locality)):
                 self.do_entangle(qc, offset, self.locality)
@@ -94,7 +96,7 @@ class TEN(PQC):
         super().__init__(nqubit, l_count)
         self.locality = locality
 
-    def entangle(self, qc, l_index):
+    def entangle(self, qc: QWrapper, l_index):
         offset = 0
         for i in range(int(self.nqubit / self.locality)):
             self.do_entangle(qc, offset)

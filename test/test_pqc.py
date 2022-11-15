@@ -1,11 +1,9 @@
 from unittest import TestCase
-from qmlutil.core.pqc import TEN, ALT
-from qiskit import QuantumCircuit
-import matplotlib.pyplot as plt
+from qmlutil.core.pqc import ALT
+from qwrapper.circuit import init_circuit
+
 
 class TestVQE(TestCase):
     def test_exec(self):
-        qc = QuantumCircuit(16)
-        ALT(16, 4, 4).add(qc)
-        qc.draw('mpl')
-        plt.show()
+        qc = init_circuit(4, "qiskit")
+        ALT(4, 8, 2, block_l_count=2).add(qc)

@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="qmlutil",
-    version="0.0.6",
+    name="qml",
+    version="0.0.7",
     author="kouhei nakaji",
     author_email="nakajijiji@gmail.com",
     description="You can receive the message 'Hello!!!'",
@@ -25,6 +25,7 @@ setuptools.setup(
         "Qulacs~=0.3.0",
         "matplotlib~=3.4.3",
         "setuptools~=58.0.4",
+        "qwrapper@ git+ssh://git@github.com/konakaji/qwrapper"
     ],
     python_requires='>=3.7',
 )
