@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="qml",
-    version="0.1.1",
+    version="0.1.2",
     author="kouhei nakaji",
     author_email="nakajijiji@gmail.com",
     description="You can receive the message 'Hello!!!'",
@@ -21,7 +21,7 @@ setuptools.setup(
     install_requires=[
         "scipy>=1.7.1",
         "setuptools>=58.0.4",
-        "qwrapper@ git+ssh://git@github.com/konakaji/qwrapper"
+        "qwrapper @ git+ssh://git@github.com/konakaji/qwrapper"
     ],
     python_requires='>=3.7',
 )
