@@ -1,10 +1,53 @@
 from math import pi
 from qwrapper.circuit import QWrapper
+from qwrapper.operator import PauliTimeEvolution
+from qwrapper.obs import PauliObservable
+from abc import ABC, abstractmethod
 import random
 
 
-class PQC:
+class PQC(ABC):
+    def __init__(self, nqubit):
+        self.nqubit = nqubit
+        self.thetas = []
+
+    def add(self, qc: QWrapper, params=None):
+        self.add_with_shift(qc, params)
+
+    def update(self, params):
+        self.thetas = params
+
+    def param_count(self):
+        return len(self.thetas)
+
+    @abstractmethod
+    def add_with_shift(self, qc: QWrapper, params=None, target_index=None, angle=0.0):
+        pass
+
+
+class TimeEvolutionPQC(PQC):
+    def __init__(self, nqubit):
+        super().__init__(nqubit)
+        self.paulis = []
+
+    def add_time_evolution(self, pauli: PauliObservable, param):
+        self.paulis.append(pauli)
+        self.thetas.append(param)
+
+    def add_with_shift(self, qc: QWrapper, params=None, target_index=None, angle=0.0):
+        if params is None:
+            params = self.thetas
+        for j in range(len(self.paulis)):
+            param = params[j]
+            if j == target_index:
+                param += angle / 2
+            time_evolution = PauliTimeEvolution(self.paulis[j], param)
+            time_evolution.add_circuit(qc)
+
+
+class LayerPQC(PQC):
     def __init__(self, nqubit, l_count):
+        super().__init__(nqubit)
         self.nqubit = nqubit
         self.l_count = l_count
         self.rotations = []
@@ -26,14 +69,16 @@ class PQC:
     def update(self, params):
         self.thetas = params
 
-    def add_with_shift(self, qc: QWrapper, target_index=None, angle=0.0):
+    def add_with_shift(self, qc: QWrapper, params=None, target_index=None, angle=0.0):
+        if params is None:
+            params = self.thetas
         for i in range(self.l_count):
             for j in range(self.nqubit):
                 index = self.nqubit * i + j
                 extra = 0
                 if index == target_index:
                     extra = angle
-                self.rotate(qc, self.rotations[index], self.thetas[index] + extra, j)
+                self.rotate(qc, self.rotations[index], params[index] + extra, j)
             self.entangle(qc, i)
             qc.barrier()
 
@@ -49,7 +94,7 @@ class PQC:
         pass
 
 
-class HEA(PQC):
+class HEA(LayerPQC):
     def entangle(self, qc: QWrapper, l_index):
         for i in range(self.nqubit):
             if i % 2 == 0 and i != self.nqubit - 1:
@@ -60,7 +105,7 @@ class HEA(PQC):
         return qc
 
 
-class ALT(PQC):
+class ALT(LayerPQC):
     def __init__(self, nqubit, l_count, locality, block_l_count=1):
         super().__init__(nqubit, l_count)
         self.locality = locality
@@ -91,7 +136,7 @@ class ALT(PQC):
                 qc.cnot(i, i + 1)
 
 
-class TEN(PQC):
+class TEN(LayerPQC):
     def __init__(self, nqubit, l_count, locality):
         super().__init__(nqubit, l_count)
         self.locality = locality
