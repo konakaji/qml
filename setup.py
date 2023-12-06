@@ -21,7 +21,6 @@ setuptools.setup(
     install_requires=[
         "scipy>=1.7.1",
         "setuptools>=58.0.4",
-        "qwrapper @ git+ssh://git@github.com/konakaji/qwrapper.git"
     ],
     python_requires='>=3.7',
 )
